@@ -12,12 +12,14 @@
 # Bugs:
 #	None currently known.
 ######################################################################################
-__version__ = '1.2' # Format specified in Python PEP 396
+__version__ = '1.3' # Format specified in Python PEP 396
 Version = 'GAUSSINT.PY, version ' + __version__ +\
 	', 8 June, 2013, by Robert Campbell, <r.campbel.256@gmail.com>'+\
-	', modified 17 March 2019 by Hubert Holin, <Hubert.Holin.1982@Polytechnique.org>'
+	', modified 19 My 2019 by Hubert Holin, <Hubert.Holin.1982@Polytechnique.org>'+\
+	' and Laurent Holin <Laurent.Holin@free.fr>'
 
 
+import sys	# For hash data
 import math	# For tools used in primality testing
 
 
@@ -89,6 +91,21 @@ class GaussInt:
 	def __ne__(self,other):  # Overload the "!=" test operator
 		
 		return not (self == other)
+	
+	
+	def __hash__(self):
+		# Adapted by Laurent Holin from hash_complex
+		# https://docs.python.org/3/library/stdtypes.html
+		
+		hash_value = hash(self.r) + sys.hash_info.imag * hash(self.i)
+		
+		# do a signed reduction modulo 2**sys.hash_info.width
+		
+		M = 2**(sys.hash_info.width - 1)
+		
+		hash_value = (hash_value & (M - 1)) - (hash_value & M)
+		
+		return -2 if hash_value == -1 else hash_value
 	
 	
 	def neutral_element_for_multiplication():
